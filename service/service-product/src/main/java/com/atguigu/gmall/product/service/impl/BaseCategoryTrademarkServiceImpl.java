@@ -29,14 +29,22 @@ public class BaseCategoryTrademarkServiceImpl extends ServiceImpl<BaseCategoryTr
 
     @Override
     public List<BaseTrademark> findTrademarkList(Long category3Id) {
+        //  根据分类Id 获取到品牌Id 集合数据
+        //  select * from base_category_trademark where category3_id = ?;
+        QueryWrapper<BaseCategoryTrademark> baseCategoryTrademarkQueryWrapper = new QueryWrapper<>();
+        baseCategoryTrademarkQueryWrapper.eq("category3_id",category3Id);
+        List<BaseCategoryTrademark> baseCategoryTrademarkList = baseCategoryTrademarkMapper.selectList(baseCategoryTrademarkQueryWrapper);
 
-        QueryWrapper<BaseCategoryTrademark> queryWrapper = new QueryWrapper<BaseCategoryTrademark>().eq("category3_id",category3Id);
-        List<BaseCategoryTrademark> list = baseCategoryTrademarkMapper.selectList(queryWrapper);
-       if (!CollectionUtils.isEmpty(list)){
-
-           list.stream().map(baseCategoryTrademark ->baseCategoryTrademark.getBaseTrademark()).collect(Collectors.toList());
-       }
-
+        //  判断baseCategoryTrademarkList 这个集合
+        if(!CollectionUtils.isEmpty(baseCategoryTrademarkList)){
+            //  需要获取到这个集合中的品牌Id 集合数据
+            List<Long> tradeMarkIdList = baseCategoryTrademarkList.stream().map(baseCategoryTrademark -> {
+                return baseCategoryTrademark.getTrademarkId();
+            }).collect(Collectors.toList());
+            //  正常查询数据的话... 需要根据品牌Id 来获取集合数据！
+            return baseTrademarkMapper.selectBatchIds(tradeMarkIdList);
+        }
+        //  如果集合为空，则默认返回空
         return null;
     }
 

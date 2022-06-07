@@ -56,7 +56,7 @@ public class SpuManageController {
      *
      * @return
      */
-    @GetMapping("{page}/{size}}")
+    @GetMapping("{page}/{size}")
     public Result getSpuInfoPage(@PathVariable Long page  ,@PathVariable Long size,SpuInfo spuInfo) {
         //创建一个page对象
         Page<SpuInfo> spuInfoPage = new Page<>(page,size);
